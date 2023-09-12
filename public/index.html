@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Node.js Chat App</title>
+
+    <style>
+      body{
+        height: 110vh;
+        overflow: hidden;
+      }
+      form{
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        padding: 1rem 8rem;
+      }
+      form input{
+        width: 80%;
+        height: 4rem;
+
+        border-radius: 4px;
+      }
+
+      form button{
+        height: 4rem;
+        width: 6rem;
+
+        border-radius: 4px;
+        background-color: rgb(155, 155, 247);
+      }
+
+      ul{
+        margin: 57px 0px;
+        z-index: -1;
+      }
+
+      .chatbox{
+        background-color: rgb(166, 166, 243);
+        width: 10rem;
+        padding: 1.2rem;
+        border-radius: 1.2rem;
+        position: relative;
+      }
+
+      .chatbox p{
+        position: absolute;
+        top:0px;
+        font-size: small;
+        margin-bottom: 20px;
+      }
+
+      .chatbox li{
+        margin-top: 20px;
+        list-style: none;
+      }
+
+      #messages div{
+        margin-top: 20px;
+      }
+
+      #chat{
+        height: 80vh;
+        overflow: scroll;
+      }
+
+      nav{
+
+        z-index: 10;
+        position: absolute;
+        text-align: center;
+        font-size: large;
+        background-color: rgb(127, 127, 255);
+        width: 100%;
+        padding: 15px;
+        margin-bottom: 10px;
+      }
+
+      form p {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>Hello</nav>
+    <audio id="tingSound" src="ting.wav"></audio>
+    <div id="chat">
+      <ul id="messages"></ul>
+      <form action="">
+        <input id="message" autocomplete="off" placeholder="Enter Your Message here..." /><button>Send</button>
+      </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+    <script>
+
+      const name = prompt("Enter your name");
+      const socket = io();
+
+      if(!name){
+        document.querySelector("form").innerHTML = "<p>Sorry, You are not allowed to send message</p>";
+      }
+
+      else{
+        document.querySelector("nav").innerHTML = name + "'s chatBox";
+      }
+      
+      document.querySelector("form").addEventListener("submit", (e) => {
+        e.preventDefault(); // Prevent the page from refreshin
+        const tingSound = document.getElementById("tingSound");
+        const message = document.querySelector("#message").value;
+        tingSound.play();
+        socket.emit("chatMessage", message);
+        document.querySelector("#message").value = "";
+      });
+
+      socket.on("message", (message) => {
+        const li = document.createElement("div");
+        li.innerHTML =  `<div class='chatbox'> <p> Message By ${name}</p><li>${message}</li></div>`;
+        document.querySelector("#messages").appendChild(li);
+      });
+    </script>
+  </body>
+</html>
