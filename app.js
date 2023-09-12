@@ -18,6 +18,7 @@ io.on('connection', (socket) => {
     io.emit('message', message); // Broadcast the message to all connected clients
   });
 
+  
   // Handle disconnections
   socket.on('disconnect', () => {
     console.log('A user disconnected');
